@@ -31,19 +31,16 @@ jobs:
           rm -f package-lock.json
           npm install --no-audit --no-fund --legacy-peer-deps
 
-      - name: Build static site
-        env:
-          GITHUB_PAGES: "true"
-        run: npm run build
+      - name: Build static GitHub Pages site
+        run: npx vite build --config vite.pages.config.ts
 
-      - name: Make asset URLs GitHub Pages-safe
+      - name: Verify Pages output
         run: |
-          find dist/client -type f \( -name '*.html' -o -name '*.js' -o -name '*.css' -o -name '*.json' \) -print0 | xargs -0 -r sed -i \
-            -e 's#/_next/#/mac-studio-website/_next/#g' \
-            -e 's#/videos/#/mac-studio-website/videos/#g' \
-            -e 's#/og.png#/mac-studio-website/og.png#g'
-          touch dist/client/.nojekyll
-          test -f dist/client/index.html
+          test -f dist/pages/github-pages/index.html
+          cp dist/pages/github-pages/index.html dist/pages/index.html
+          rm -rf dist/pages/github-pages
+          touch dist/pages/.nojekyll
+          test -f dist/pages/index.html
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
@@ -51,7 +48,7 @@ jobs:
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: dist/client
+          path: dist/pages
 
   deploy:
     environment:
