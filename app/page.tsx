@@ -1,5 +1,7 @@
 import MacStudioSite from "../components/MacStudioSite";
 
+export const dynamic = "force-static";
+
 const structuredData = {
   "@context": "https://schema.org",
   "@type": ["LocalBusiness", "ArtSchool"],
